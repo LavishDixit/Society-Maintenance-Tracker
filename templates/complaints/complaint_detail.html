@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load complaint_extras %}
+{% block title %}Complaint #{{ complaint.id }}{% endblock %}
+{% block content %}
+<div class="card p-4 mb-4">
+  <div class="d-flex justify-content-between align-items-start">
+    <div>
+      <h3 class="mb-1"><span class="mono text-muted">#{{ complaint.id }}</span> <span class="category-icon">{{ complaint.category|category_icon }}</span>{{ complaint.get_category_display }}</h3>
+      <p class="text-muted mb-2 mono" style="font-size: 0.8rem;">Filed by {{ complaint.resident.username }} &middot; {{ complaint.created_at|date:"d M Y, H:i" }}</p>
+    </div>
+    {% if complaint.is_overdue %}<span class="stamp stamp-overdue fs-6">Overdue</span>{% endif %}
+  </div>
+  <p class="mt-2">{{ complaint.description }}</p>
+  {% if complaint.photo %}
+    <img src="{{ complaint.photo.url }}" class="img-fluid rounded mb-3 photo-thumb" style="max-width: 300px; border: 1px solid var(--line);" alt="Complaint photo" onclick="openLightbox('{{ complaint.photo.url }}')">
+  {% endif %}
+  {% if complaint.resolution_photo %}
+    <div class="mt-2">
+      <p class="text-muted small mb-1 mono">RESOLVED — AFTER PHOTO</p>
+      <img src="{{ complaint.resolution_photo.url }}" class="img-fluid rounded mb-3 photo-thumb" style="max-width: 300px; border: 1px solid var(--moss);" alt="Resolution photo" onclick="openLightbox('{{ complaint.resolution_photo.url }}')">
+    </div>
+  {% endif %}
+  <div class="d-flex gap-2">
+    <span class="stamp {{ complaint.status|status_stamp }}">{{ complaint.get_status_display }}</span>
+    <span class="stamp {{ complaint.priority|priority_stamp }}">{{ complaint.get_priority_display }} priority</span>
+  </div>
+
+  {% if user.is_admin_role %}
+    <a href="{% url 'complaints:admin_update' complaint.id %}" class="btn btn-primary btn-sm mt-3" style="width: fit-content;">Update Status / Priority</a>
+  {% endif %}
+</div>
+
+<h5 class="mb-3">Status History</h5>
+<ul class="ledger">
+  {% for log in complaint.history.all %}
+    <li class="ledger-entry">
+      <span class="stamp {{ log.status|status_stamp }}">{{ log.get_status_display }}</span>
+      <span class="mono text-muted ms-2" style="font-size: 0.8rem;">{{ log.timestamp|date:"d M Y, H:i" }}</span>
+      {% if log.actor %}<span class="text-muted" style="font-size: 0.85rem;"> &mdash; {{ log.actor.username }}</span>{% endif %}
+      {% if log.note %}<div class="mt-1" style="font-size: 0.9rem;">{{ log.note }}</div>{% endif %}
+    </li>
+  {% empty %}
+    <li class="ledger-entry text-muted">No history yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

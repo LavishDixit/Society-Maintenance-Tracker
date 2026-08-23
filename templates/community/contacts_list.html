@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Contacts{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h3 class="mb-0">☎️ Contacts</h3>
+    <p class="text-muted mb-0 mono" style="font-size: 0.8rem;">Committee & emergency numbers</p>
+  </div>
+  {% if user.is_committee %}
+    <a href="{% url 'community:contact_add' %}" class="btn btn-primary btn-sm">+ Add Contact</a>
+  {% endif %}
+</div>
+
+<h5 class="mb-3">Society Committee</h5>
+{% if not committee_contacts %}
+  <p class="text-muted">No committee contacts added yet.</p>
+{% endif %}
+<div class="row g-3 mb-4">
+  {% for c in committee_contacts %}
+    <div class="col-md-4">
+      <div class="card p-3 h-100">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="fw-bold">{{ c.name }}</div>
+            <div class="text-muted small">{{ c.designation }}</div>
+          </div>
+        </div>
+        <a href="tel:{{ c.phone_number }}" class="mono fs-5 d-block mt-2">📞 {{ c.phone_number }}</a>
+        {% if c.notes %}<p class="text-muted small mb-0 mt-1">{{ c.notes }}</p>{% endif %}
+        {% if user.is_committee %}
+          <div class="mt-2">
+            <a href="{% url 'community:contact_edit' c.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+            <a href="{% url 'community:contact_delete' c.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Remove this contact?');">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<h5 class="mb-3">Emergency Services</h5>
+{% if not emergency_contacts %}
+  <p class="text-muted">No emergency contacts added yet.</p>
+{% endif %}
+<div class="row g-3">
+  {% for c in emergency_contacts %}
+    <div class="col-md-4">
+      <div class="card p-3 h-100 border-danger">
+        <div class="fw-bold">{{ c.name }}</div>
+        <div class="text-muted small">{{ c.designation }}</div>
+        <a href="tel:{{ c.phone_number }}" class="mono fs-5 d-block mt-2 text-danger">📞 {{ c.phone_number }}</a>
+        {% if c.notes %}<p class="text-muted small mb-0 mt-1">{{ c.notes }}</p>{% endif %}
+        {% if user.is_committee %}
+          <div class="mt-2">
+            <a href="{% url 'community:contact_edit' c.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+            <a href="{% url 'community:contact_delete' c.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Remove this contact?');">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

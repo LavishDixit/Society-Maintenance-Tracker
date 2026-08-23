@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load complaint_extras %}
+{% block title %}My Complaints{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h3 class="mb-0">My Complaints</h3>
+    <p class="text-muted mb-0 mono" style="font-size: 0.8rem;">Register of everything you've raised</p>
+  </div>
+  <a href="{% url 'complaints:raise_complaint' %}" class="btn btn-primary btn-sm">+ Raise Complaint</a>
+</div>
+
+{% if not complaints %}
+  <div class="empty-state">
+    <div class="empty-icon">🗒️</div>
+    <p class="mt-2 mb-0">Nothing on your record yet. Raise a complaint and it'll show up here with its full history.</p>
+  </div>
+{% endif %}
+
+<div class="row g-3">
+  {% for c in complaints %}
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <h5 class="card-title mb-1"><span class="mono text-muted">#{{ c.id }}</span> <span class="category-icon">{{ c.category|category_icon }}</span>{{ c.get_category_display }}</h5>
+          {% if c.is_overdue %}<span class="stamp stamp-overdue">Overdue</span>{% endif %}
+        </div>
+        <p class="card-text">{{ c.description|truncatewords:20 }}</p>
+        <div class="d-flex gap-2 flex-wrap">
+          <span class="stamp {{ c.status|status_stamp }}">{{ c.get_status_display }}</span>
+          <span class="stamp {{ c.priority|priority_stamp }}">{{ c.get_priority_display }} priority</span>
+        </div>
+        <p class="text-muted small mt-3 mb-0 mono">Raised {{ c.created_at|date:"d M Y, H:i" }}</p>
+        <a href="{% url 'complaints:complaint_detail' c.id %}" class="stretched-link"></a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load complaint_extras %}
+{% block title %}All Complaints{% endblock %}
+{% block content %}
+<div class="mb-4">
+  <h3 class="mb-0">All Complaints</h3>
+  <p class="text-muted mb-0 mono" style="font-size: 0.8rem;">Overdue entries surface first &middot; {{ page_obj.paginator.count }} total</p>
+</div>
+
+<form method="get" class="row g-2 mb-4">
+  <div class="col-md-4">{{ filter_form.search }}</div>
+  <div class="col-md-2">{{ filter_form.category }}</div>
+  <div class="col-md-2">{{ filter_form.status }}</div>
+  <div class="col-md-2">{{ filter_form.date_from }}</div>
+  <div class="col-md-2">{{ filter_form.date_to }}</div>
+  <div class="col-12"><button class="btn btn-outline-primary btn-sm">Filter</button>
+    <a href="{% url 'complaints:admin_list' %}" class="btn btn-link btn-sm">Clear</a>
+  </div>
+</form>
+
+<div class="table-responsive">
+<table class="table table-hover register align-middle">
+  <thead>
+    <tr>
+      <th>Ref</th><th>Category</th><th>Resident</th><th>Priority</th><th>Status</th><th>Raised</th><th>Overdue</th><th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for c in complaints %}
+    <tr class="{% if c.is_overdue %}row-overdue{% endif %}">
+      <td class="mono">#{{ c.id }}</td>
+      <td><span class="category-icon">{{ c.category|category_icon }}</span>{{ c.get_category_display }}</td>
+      <td>{{ c.resident.username }} <span class="text-muted mono" style="font-size:0.78rem;">({{ c.resident.flat_number }})</span></td>
+      <td><span class="stamp {{ c.priority|priority_stamp }}">{{ c.get_priority_display }}</span></td>
+      <td><span class="stamp {{ c.status|status_stamp }}">{{ c.get_status_display }}</span></td>
+      <td class="mono" style="font-size: 0.8rem;">{{ c.created_at|date:"d M Y" }}</td>
+      <td>{% if c.is_overdue %}<span class="stamp stamp-overdue">Overdue</span>{% else %}<span class="text-muted">&mdash;</span>{% endif %}</td>
+      <td class="text-nowrap">
+        <a href="{% url 'complaints:complaint_detail' c.id %}" class="btn btn-sm btn-outline-secondary">View</a>
+        <a href="{% url 'complaints:admin_update' c.id %}" class="btn btn-sm btn-primary">Update</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="8"><div class="empty-state">No complaints match this filter.</div></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<nav aria-label="Complaint list pages">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if querystring %}&{{ querystring }}{% endif %}">Previous</a></li>
+    {% endif %}
+    {% for num in page_obj.paginator.page_range %}
+      <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+        <a class="page-link" href="?page={{ num }}{% if querystring %}&{{ querystring }}{% endif %}">{{ num }}</a>
+      </li>
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if querystring %}&{{ querystring }}{% endif %}">Next</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+{% endblock %}

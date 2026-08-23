@@ -1,0 +1,382 @@
+/* ============================================================
+   Society Tracker — design system
+   Direction: an official building register / noticeboard.
+   Status shown as ink stamps, notices as a corkboard, history
+   as a ledger timeline. Paper + civic type, not a SaaS dashboard.
+   ============================================================ */
+
+:root {
+  --paper:        #eef0ea;
+  --paper-raised: #f8f8f4;
+  --ink:          #1e2a22;
+  --ink-soft:     #4b5750;
+  --line:         #d9dcd0;
+
+  --navy:         #243350;
+  --navy-deep:    #182338;
+  --brass:        #b98b2e;
+  --brass-soft:   #f1e2bc;
+  --brick:        #a63d2f;
+  --brick-soft:   #f3ddd8;
+  --moss:         #4f7855;
+  --moss-soft:    #dde9df;
+  --slate:        #5b6472;
+  --slate-soft:   #e4e6e0;
+
+  --radius: 4px;
+  --shadow-card: 0 1px 2px rgba(30, 42, 34, 0.06), 0 1px 0 rgba(30, 42, 34, 0.04);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+h1, h2, h3, h4, h5, .brand-mark {
+  font-family: "Zilla Slab", Georgia, serif;
+  color: var(--navy-deep);
+  letter-spacing: -0.01em;
+}
+
+.mono, .stamp, .timestamp, .complaint-id {
+  font-family: "IBM Plex Mono", monospace;
+}
+
+a { color: var(--navy); }
+a:hover { color: var(--brass); }
+
+/* ---------------------------------------------------------
+   Top nameplate bar
+   --------------------------------------------------------- */
+.navbar.society-nav {
+  background: var(--navy-deep) !important;
+  border-bottom: 3px solid var(--brass);
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+.society-nav .navbar-brand {
+  font-family: "Zilla Slab", Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #f5f3ea !important;
+}
+
+.society-nav .nav-link {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+  color: #cdd2de !important;
+  padding: 0.5rem 0.9rem !important;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.society-nav .nav-link:hover {
+  color: #ffffff !important;
+  border-bottom-color: var(--brass);
+}
+
+.society-nav .navbar-text {
+  font-size: 0.82rem;
+  color: #9aa3b5 !important;
+  letter-spacing: 0.03em;
+}
+
+.society-nav .btn-outline-light {
+  border-color: #5a6479;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.nav-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  margin-left: 0.35rem;
+  border-radius: 999px;
+  background: var(--brick);
+  color: #fff;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+/* ---------------------------------------------------------
+   Cards / surfaces
+   --------------------------------------------------------- */
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+  box-shadow: var(--shadow-card);
+}
+
+.card-title {
+  font-size: 1.05rem;
+}
+
+/* ---------------------------------------------------------
+   Signature element: ink-stamp status/priority badges
+   --------------------------------------------------------- */
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.24rem 0.55rem;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  transform: rotate(-1deg);
+  background: transparent;
+}
+
+.stamp-open       { color: var(--slate); }
+.stamp-inprogress { color: var(--brass); }
+.stamp-resolved   { color: var(--moss); }
+.stamp-overdue    { color: var(--brick); transform: rotate(-2deg); }
+
+.stamp-priority-low    { color: var(--slate); opacity: 0.85; }
+.stamp-priority-medium { color: var(--brass); }
+.stamp-priority-high   { color: var(--brick); }
+
+/* legacy badge kept working, restyled to match */
+.badge-overdue {
+  background-color: transparent !important;
+  color: var(--brick) !important;
+  border: 1.5px solid var(--brick);
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 600;
+  transform: rotate(-2deg);
+}
+
+/* ---------------------------------------------------------
+   Table (admin complaint list = register book)
+   --------------------------------------------------------- */
+.table.register {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+}
+
+.table.register thead th {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-soft);
+  border-bottom: 2px solid var(--navy);
+  background: var(--slate-soft);
+}
+
+.table.register td { vertical-align: middle; font-size: 0.9rem; }
+
+.table.register tr.row-overdue {
+  background-color: var(--brick-soft) !important;
+}
+
+/* ---------------------------------------------------------
+   Notice board = corkboard
+   --------------------------------------------------------- */
+.corkboard {
+  background:
+    radial-gradient(circle at 20% 30%, rgba(0,0,0,0.03) 0, transparent 3%),
+    radial-gradient(circle at 80% 70%, rgba(0,0,0,0.03) 0, transparent 3%),
+    #ded9c4;
+  border: 1px solid #c7c0a4;
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.notice-pin {
+  position: relative;
+  background: #fffdf6;
+  border: 1px solid #d8d2ba;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.12);
+  transform: rotate(-0.6deg);
+}
+
+.notice-pin:nth-child(even) { transform: rotate(0.7deg); }
+
+.notice-pin.important {
+  border-color: var(--brass);
+}
+
+.notice-pin .pin-dot {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e2b23d, #a5741a);
+  box-shadow: 0 2px 3px rgba(0,0,0,0.35);
+}
+
+/* ---------------------------------------------------------
+   Ledger timeline = complaint status history
+   --------------------------------------------------------- */
+.ledger {
+  position: relative;
+  padding-left: 1.75rem;
+  border-left: 2px solid var(--line);
+  list-style: none;
+}
+
+.ledger-entry {
+  position: relative;
+  padding-bottom: 1.25rem;
+}
+
+.ledger-entry::before {
+  content: '';
+  position: absolute;
+  left: -2.32rem;
+  top: 0.3rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--navy);
+  border: 2px solid var(--paper);
+}
+
+.ledger-entry:last-child { padding-bottom: 0; }
+
+/* ---------------------------------------------------------
+   Dashboard stat tiles
+   --------------------------------------------------------- */
+.stat-tile {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.stat-tile .stat-number {
+  font-family: "Zilla Slab", serif;
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: var(--navy-deep);
+}
+
+.stat-tile.alert .stat-number { color: var(--brick); }
+.stat-tile .stat-label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+
+/* ---------------------------------------------------------
+   Forms
+   --------------------------------------------------------- */
+.form-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.form-control, .form-select {
+  border-radius: 3px;
+  border-color: var(--line);
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--navy);
+  box-shadow: 0 0 0 3px rgba(36, 51, 80, 0.12);
+}
+
+.btn-primary {
+  background-color: var(--navy);
+  border-color: var(--navy);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.btn-primary:hover {
+  background-color: var(--navy-deep);
+  border-color: var(--navy-deep);
+}
+
+/* ---------------------------------------------------------
+   Empty states
+   --------------------------------------------------------- */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--ink-soft);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+
+.empty-state .empty-icon { font-size: 2rem; opacity: 0.6; }
+
+/* ---------------------------------------------------------
+   Photo lightbox
+   --------------------------------------------------------- */
+.photo-thumb {
+  cursor: zoom-in;
+  transition: opacity 0.15s ease;
+}
+.photo-thumb:hover { opacity: 0.85; }
+
+.lightbox-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(24, 35, 56, 0.88);
+  z-index: 1050;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+  padding: 2rem;
+}
+.lightbox-overlay.open { display: flex; }
+.lightbox-overlay img {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+/* ---------------------------------------------------------
+   Pagination
+   --------------------------------------------------------- */
+.pagination .page-link {
+  color: var(--navy);
+  border-color: var(--line);
+}
+.pagination .page-item.active .page-link {
+  background-color: var(--navy);
+  border-color: var(--navy);
+}
+
+/* ---------------------------------------------------------
+   Category icon chip
+   --------------------------------------------------------- */
+.category-icon {
+  display: inline-block;
+  font-size: 1rem;
+  margin-right: 0.3rem;
+}
