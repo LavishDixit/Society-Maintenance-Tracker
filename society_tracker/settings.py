@@ -155,9 +155,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ---------------------------------------------------------------------------
 # Email (SendGrid via SMTP relay)
 # ---------------------------------------------------------------------------
-MAIL_BACKEND = config(
+# ---------------------------------------------------------------------------
+# Email (Brevo SMTP)
+# ---------------------------------------------------------------------------
+EMAIL_BACKEND = config(
     'EMAIL_BACKEND',
-    default='django.core.mail.backends.console.EmailBackend'
+    default='django.core.mail.backends.smtp.EmailBackend'
 )
 
 EMAIL_HOST = config('EMAIL_HOST', default='smtp-relay.brevo.com')
